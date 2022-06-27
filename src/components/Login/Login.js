@@ -1,18 +1,48 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { Link, useNavigate } from 'react-router-dom';
+import auth from '../../firebase.init';
 import './Login.css';
+
 const Login = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [
+        createUserWithEmailAndPassword,
+        user,
+        loading,
+        error,
+    ] = useCreateUserWithEmailAndPassword(auth);
+    const navigate = useNavigate
+
+    const handleEmailBlur = event =>{
+        setEmail(event.target.value);
+    }
+
+    const handlePasswordBlur = event =>{
+        setPassword(event.target.value);
+    }
+
+    if(user){
+        navigate('/shop')
+    }
+
+    const handleUsersSignIn = event =>{
+        event.preventDefault();
+        createUserWithEmailAndPassword(email, password)
+    }
     return (
         <div className='form-container'>
             <div>
                 <h2 className='form-title'>Log in</h2>
-                <form>
+                <form onSubmit={handleUsersSignIn}>
                     <div className="input-group">
                         <label htmlFor="email">Email</label>
-                        <input type="email" name="email" id="" required />
+                        <input onBlur={handleEmailBlur} type="email" name="email" id="email" required />
                     </div>
                     <div className="input-group">
                         <label htmlFor="password">Password</label>
-                        <input type="password" name="password" id="" required />
+                        <input onBlur={handlePasswordBlur} type="password" name="password" id="password" required />
                     </div>
                     <input className='form-submit' type="submit" value="Login" />
                 </form>
